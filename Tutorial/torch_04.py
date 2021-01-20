@@ -46,6 +46,8 @@ print(input)
 out = net(input)
 print(out)
 # %%
+
+## zero_grad() 로 이전 gradient history를 갱신함
 net.zero_grad() ## 역전파 전 grad를 0으로 갱신
 out.backward(torch.randn(1, 10))
 # %%
