@@ -68,6 +68,7 @@ net.zero_grad()
 print("conv1.bias.grad before backward")
 print(net.conv1.bias.grad)
 
+## apply backward
 loss.backward()
 
 print('conv1.bias.grad after backward')
