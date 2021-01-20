@@ -40,7 +40,7 @@ params = list(net.parameters())
 print(len(params))
 print(params[0].size())
 # %%
-
+## input 임의 생성
 input = torch.rand(1,1,32,32)
 print(input)
 out = net(input)
