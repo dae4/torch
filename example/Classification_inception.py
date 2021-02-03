@@ -35,27 +35,27 @@ test_data = datasets.ImageFolder('image/train/',test_transform)
 train_loader = DataLoader(train_data, batch_size=BATCH_SIZE, shuffle=True,num_workers=8)
 test_loader = DataLoader(test_data, batch_size=BATCH_SIZE, shuffle=True,num_workers=8)
 #%%
-
+import matplotlib.pyplot as plt
 ## Data Visualize ##
 
 def show():
     img, lab = next(iter(train_loader))
     class_name = [train_data.classes[i] for i in lab]
-    img = torchvision.utils.make_grid(img,nrow=8)
+    img = torchvision.utils.make_grid(img, nrow=8)
+    
+    plt.figure(figsize=(10, 10))
+    img = img.numpy().transpose((1, 2, 0))
+    mean = np.array([0.485, 0.456, 0.406])
+    std = np.array([0.229, 0.224, 0.225])
+    img = std * img + mean
+    plt.imshow(img)
 
-    figsize(10,10)
-    img = ing.numpy().transpose((1,2,0))
-    mean = np.array([0.485,0.456,0.406])
-    std = np.array([0.229,0.224,0.225])
-    image = std * img + mean
     if class_name is not None:
         plt.title(class_name)
-    # plt.pause(0.001)
+    plt.pause(0.001)
 
-# show()
-# not active...
+show()
 #%%
-
 
 inception = models.inception_v3(pretrained=True)
 
@@ -100,9 +100,9 @@ def train_model(model, criterion,optimizer,epochs=30):
             loss = criterion(y_pred, y_true)
             loss.backward()
             optimizer.step()
-
-            _loss = loss.data[0]
-            epoch_loss +=loss
+            
+            _loss = loss.data
+            epoch_loss += _loss
 
         print(f'[{epoch+1}] loss:{epoch_loss/step:.4f}')
 
@@ -125,3 +125,4 @@ def validate(model, epochs=1):
     print('accuracy:', n_total_correct/len(test_loader.dataset))
 
 validate(inception)
+# %%
