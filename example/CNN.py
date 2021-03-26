@@ -14,8 +14,6 @@ from torch.optim import lr_scheduler
 import copy
 import time
 
-# def StartTraining(dataRootDir, modelOutputDir, gpuNum, visibleGpu, batchSize, imgSize, epoch, release_mode=False):
-
 ImageFile.LOAD_TRUNCATED_IMAGES = False
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
@@ -23,22 +21,21 @@ os.environ["CUDA_VISIBLE_DEVICES"]='0,1,2,3,4,5,6,7'
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+image_size = 299
+batch_size = 32 * torch.cuda.device_count()
+epochs=50
+
+
 dataRootDir=''
 trainBaseDir = dataRootDir + "train"
 testBaseDir = dataRootDir + "test"
 
 classes_name = sorted(os.listdir(trainBaseDir))
-modelOutputDir=""
+modelOutputDir= ""
 
 shutil.rmtree(modelOutputDir, ignore_errors=True)
 if not os.path.exists(modelOutputDir):
     os.makedirs(modelOutputDir)
-
-n_classes = len(classes_name)
-image_size = 299
-batch_size = 32 * torch.cuda.device_count()
-
-print("n_classes",n_classes)
 
 trans = transforms.Compose([transforms.Resize((image_size,image_size)),transforms.ToTensor()])
 
@@ -50,7 +47,6 @@ testloader = DataLoader(test_data,batch_size=batch_size,shuffle=False,num_worker
 
 
 ## Create Model
-# device = torch.device("cuda:0")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = xception()
 if torch.cuda.device_count() > 1:
@@ -62,7 +58,6 @@ net=model.to(device)
 optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 criterion = nn.CrossEntropyLoss()
 
-epochs=50
 
 
 # 5 에폭마다 0.1씩 학습률 감소
